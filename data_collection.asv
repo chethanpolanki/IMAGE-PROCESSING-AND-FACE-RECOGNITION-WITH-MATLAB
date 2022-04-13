@@ -1,0 +1,28 @@
+clc
+clear all
+close all
+warning off;
+cao=webcam;%turn on the webcam
+Detector = vision.CascadeObjectDetector; %this function is used to check whether face is present or not using viola jones algorithm
+c=150;%here we are taking the image for 150 times
+temp=0;%temparary variable which i'm using to keep track of total no of faces taken
+while true% making an infinate loop untill temp reaches 150.
+    e=cao.snapshot;%capturing faces from input webcam.
+    bboxes =step(Detector,e);%coming to detecting face.
+    if(sum(sum(bboxes))~=0)% if we didn't got face
+    if(temp>=c)% we will check whether it reached 150 or not, if it reaches then we will break the loop
+        break;
+    else
+    es=imcrop(e,bboxes(1,:));%croping the image that is detected
+    es=imresize(es,[227 227]);%resizing the image, 227*227 is required because alexnet requires size of this
+    filename=strcat(num2str(temp),'.bmp');%filename assigns a filename;strcat is used for string concardination;num2string makes temp value as string and we are adding.bmp for the file to make it bitmap image file
+    imwrite(es,filename);%im write is used to write the image
+    temp=temp+1;%incrementing temp if face is detected
+    imshow(es);%just shows the image
+    drawnow;% updates on screen immediately
+    end
+    else
+        imshow(e);
+        drawnow;
+    end
+end
